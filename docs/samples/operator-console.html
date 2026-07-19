@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>equiprentalops.render-html -- Equipment Rental Governor operator console</title>
+<style>
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ok { color: #137a3f; }
+body { font-family: system-ui,-apple-system,sans-serif; margin: 0; color: #1a1a1a; background: #fafafa; }
+header.bar { display: flex; align-items: center; gap: 12px; padding: 12px 20px; background: #fff; border-bottom: 1px solid #e5e5e5; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #f0f0f0; }
+h2 { margin-top: 0; font-size: 15px; }
+.warn { color: #b25c00; background: #fff8e1; padding: 2px 6px; border-radius: 4px; }
+main { max-width: 1080px; margin: 24px auto; padding: 0 20px; }
+header.bar h1 { font-size: 18px; margin: 0; font-weight: 600; }
+.muted { color: #888; font-size: 13px; }
+.critical { color: #fff; background: #b3261e; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+.card { background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 16px; margin-bottom: 16px; overflow-x: auto; }
+.err { color: #b3261e; background: #fbe9e7; padding: 2px 6px; border-radius: 4px; }
+th { font-weight: 600; color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+header.bar .badge { margin-left: auto; font-size: 12px; color: #666; }
+code { font-size: 12px; background: #f4f4f4; padding: 1px 4px; border-radius: 3px; }
+p.note { font-size: 12px; color: #666; }
+</style>
+</head>
+<body>
+<header class="bar"><h1>EquipRentalOps -- Operator Console</h1><span class="badge">ISIC 7730 &middot; equipment/machinery rental coordination &middot; phase 3</span></header>
+<main>
+<section class="card"><h2>Equipment Fleet (registered rental-asset directory)</h2><table><thead><tr><th>Asset</th><th>Name</th><th>Registered</th><th>Verified</th><th>Latest status</th></tr></thead><tbody>
+<tr><td><code>unit-1</code></td><td>Mini excavator, 1.5t, diesel</td><td>yes</td><td>yes</td><td class="err">governor-hold: scope-excluded</td></tr>
+<tr><td><code>unit-2</code></td><td>Event canopy tent, 6x12m, aluminum frame</td><td>yes</td><td>yes</td><td class="muted">in progress</td></tr>
+<tr><td><code>unit-3</code></td><td>Towable generator, 20kVA, awaiting post-return inspection</td><td>yes</td><td>no</td><td class="muted">in progress</td></tr>
+</tbody></table></section>
+<section class="card"><h2>Committed Coordination Records</h2><p class="note">Every row here passed the EquipRentalGovernor (all three HARD checks clean) and, where the op is not phase-auto-eligible or is an always-escalate op, a human fleet-manager approval.</p><table><thead><tr><th>Op</th><th>Asset</th><th>Value</th><th>Payload</th></tr></thead><tbody>
+<tr><td><code>log-rental-record</code></td><td><code>unit-1</code></td><td>{:asset-id &quot;unit-1&quot;, :renter &quot;Acme Contracting&quot;, :checkout &quot;2026-07-14&quot;, :days 3}</td><td>{:asset-id &quot;unit-1&quot;, :renter &quot;Acme Contracting&quot;, :checkout &quot;2026-07-14&quot;, :days 3}</td></tr>
+<tr><td><code>schedule-maintenance-inspection</code></td><td><code>unit-1</code></td><td>{:asset-id &quot;unit-1&quot;, :item &quot;hydraulic hose post-return inspection&quot;, :urgency &quot;routine&quot;}</td><td>{:asset-id &quot;unit-1&quot;, :item &quot;hydraulic hose post-return inspection&quot;, :urgency &quot;routine&quot;}</td></tr>
+<tr><td><code>coordinate-fleet-restock</code></td><td><code>unit-1</code></td><td>{:asset-id &quot;unit-1&quot;, :item &quot;replacement bucket teeth&quot;, :quantity 6, :estimated-cost 300}</td><td>{:asset-id &quot;unit-1&quot;, :item &quot;replacement bucket teeth&quot;, :quantity 6, :estimated-cost 300}</td></tr>
+<tr><td><code>coordinate-fleet-restock</code></td><td><code>unit-1</code></td><td>{:asset-id &quot;unit-1&quot;, :item &quot;replacement mini excavator unit&quot;, :quantity 1, :estimated-cost 15000}</td><td>{:asset-id &quot;unit-1&quot;, :item &quot;replacement mini excavator unit&quot;, :quantity 1, :estimated-cost 15000, :approved-by &quot;fleet-manager-1&quot;}</td></tr>
+<tr><td><code>flag-equipment-safety-concern</code></td><td><code>unit-1</code></td><td>{:asset-id &quot;unit-1&quot;, :concern &quot;hydraulic hose leak observed after last return&quot;, :confidence 0.92}</td><td>{:asset-id &quot;unit-1&quot;, :concern &quot;hydraulic hose leak observed after last return&quot;, :confidence 0.92, :approved-by &quot;fleet-manager-1&quot;}</td></tr>
+</tbody></table></section>
+<section class="card"><h2>Rollout Phase / Action Gate</h2><p class="note">Sourced from <code>equiprentalops.phase/phases</code> -- "writes" is the closed op allowlist enabled at that phase, "auto" is the subset eligible for governor-clean auto-commit. <code>:flag-equipment-safety-concern</code> is deliberately absent from every phase's auto set (governor/always-escalate-ops agrees independently). A <code>:coordinate-fleet-restock</code> proposal whose <code>:estimated-cost</code> exceeds 2000 (USD) always escalates regardless of phase or confidence. Confidence floor: 0.6.</p><table><thead><tr><th>Phase</th><th>Label</th><th>Writes</th><th>Auto-commit</th></tr></thead><tbody>
+<tr><td>0</td><td>read-only</td><td></td><td></td></tr>
+<tr><td>1</td><td>assisted-logging</td><td>log-rental-record</td><td></td></tr>
+<tr><td>2</td><td>assisted-coordination</td><td>coordinate-fleet-restock, log-rental-record, schedule-maintenance-inspection</td><td></td></tr>
+<tr><td>3</td><td>supervised-auto</td><td>coordinate-fleet-restock, flag-equipment-safety-concern, log-rental-record, schedule-maintenance-inspection</td><td>coordinate-fleet-restock, log-rental-record, schedule-maintenance-inspection</td></tr>
+</tbody></table></section>
+<section class="card"><h2>Audit Ledger (append-only, verbatim)</h2><table><thead><tr><th>Type</th><th>Op</th><th>Actor</th><th>Asset</th><th>Disposition</th><th>Basis</th><th>Confidence</th></tr></thead><tbody>
+<tr><td>committed</td><td><code>log-rental-record</code></td><td>mgr-1</td><td><code>unit-1</code></td><td class="ok">commit</td><td>unit-1</td><td></td></tr>
+<tr><td>committed</td><td><code>schedule-maintenance-inspection</code></td><td>mgr-1</td><td><code>unit-1</code></td><td class="ok">commit</td><td>unit-1</td><td></td></tr>
+<tr><td>committed</td><td><code>coordinate-fleet-restock</code></td><td>mgr-1</td><td><code>unit-1</code></td><td class="ok">commit</td><td>unit-1</td><td></td></tr>
+<tr><td>committed</td><td><code>coordinate-fleet-restock</code></td><td>mgr-1</td><td><code>unit-1</code></td><td class="ok">commit</td><td>unit-1</td><td></td></tr>
+<tr><td>committed</td><td><code>flag-equipment-safety-concern</code></td><td>mgr-1</td><td><code>unit-1</code></td><td class="ok">commit</td><td>unit-1</td><td></td></tr>
+<tr><td>governor-hold</td><td><code>log-rental-record</code></td><td>mgr-1</td><td><code>unit-99</code></td><td class="err">hold</td><td>asset-unverified</td><td>0.94</td></tr>
+<tr><td>governor-hold</td><td><code>schedule-maintenance-inspection</code></td><td>mgr-1</td><td><code>unit-1</code></td><td class="err">hold</td><td>effect-not-propose</td><td>0.89</td></tr>
+<tr><td>governor-hold</td><td><code>log-rental-record</code></td><td>mgr-1</td><td><code>unit-1</code></td><td class="err">hold</td><td>scope-excluded</td><td>0.94</td></tr>
+</tbody></table></section>
+</main>
+</body></html>
