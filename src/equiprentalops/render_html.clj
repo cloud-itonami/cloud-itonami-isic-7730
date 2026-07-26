@@ -4,7 +4,8 @@
   Drives the REAL actor stack (equiprentalops.operation ->
   equiprentalops.governor -> equiprentalops.store).
   No invented numbers, no timestamps, byte-identical across reruns."
-  (:require [clojure.string :as str]
+  (:require [jp-go-dds.skin]
+            [clojure.string :as str]
             [equiprentalops.store :as store]
             [equiprentalops.operation :as op]
             [equiprentalops.advisor :as advisor]
@@ -149,7 +150,9 @@ p.note { font-size: 12px; color: #666; }")
   (str
    "<!doctype html>\n<html lang=\"ja\">\n<head>\n<meta charset=\"utf-8\">\n"
    "<title>equiprentalops.render-html -- Equipment Rental Governor operator console</title>\n"
-   "<style>\n" css "\n</style>\n</head>\n<body>\n"
+   "<style>"
+   (jp-go-dds.skin/dds+skin)
+   "</style>\n</head>\n<body>\n"
    "<header class=\"bar\"><h1>EquipRentalOps -- Operator Console</h1>"
    "<span class=\"badge\">ISIC 7730 &middot; equipment/machinery rental coordination &middot; phase "
    (esc phase/default-phase) "</span></header>\n<main>\n"
