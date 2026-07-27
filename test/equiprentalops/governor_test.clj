@@ -137,3 +137,34 @@
       (is (true? (:ok? verdict)))
       (is (false? (:hard? verdict)))
       (is (false? (:escalate? verdict))))))
+
+;; ---------------------------------------------------------------------------
+;; The threshold gate must not read the number it exists to doubt
+;; ---------------------------------------------------------------------------
+
+(deftest omitting-the-cost-no-longer-skips-the-gate
+  (testing "`(some-> amount (> threshold))` returned nil when :estimated-cost was
+            ABSENT, so a restock proposal carrying no cost at all escalated to
+            nobody -- and the op was :auto-eligible at phase 3"
+    (let [s (store/mem-store {"unit-1" unit-1})
+          amountless (assoc (clean-proposal :coordinate-fleet-restock "unit-1")
+                            :value {:item "spare parts"} :confidence 0.99)
+          verdict (gov/check {} nil amountless s)]
+      (is (true? (:high-stakes? verdict)))
+      (is (true? (:escalate? verdict)))
+      (is (false? (:ok? verdict))))))
+
+(deftest a-non-numeric-cost-escalates-rather-than-being-compared
+  (let [s (store/mem-store {"unit-1" unit-1})]
+    (doseq [bad ["500" :unknown {} nil]]
+      (let [p (assoc (clean-proposal :coordinate-fleet-restock "unit-1")
+                     :value {:estimated-cost bad} :confidence 0.99)]
+        (is (true? (:high-stakes? (gov/check {} nil p s)))
+            (str "non-numeric cost " (pr-str bad) " must escalate, not slip through"))))))
+
+(deftest a-cost-below-the-threshold-still-stands-the-gate-down
+  (testing "the gate is not simply always-on"
+    (let [s (store/mem-store {"unit-1" unit-1})
+          routine (assoc (clean-proposal :coordinate-fleet-restock "unit-1")
+                         :value {:estimated-cost 10} :confidence 0.9)]
+      (is (false? (:high-stakes? (gov/check {} nil routine s)))))))

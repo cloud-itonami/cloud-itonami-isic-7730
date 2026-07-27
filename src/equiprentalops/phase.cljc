@@ -32,6 +32,11 @@
 ;; NOTE the invariant: `:flag-equipment-safety-concern` is a member of
 ;; `write-ops` (governor-gated like any write) but is NEVER a member
 ;; of any phase's `:auto` set below. Do not add it there.
+;; `:coordinate-fleet-restock` is deliberately ABSENT from every phase's
+;; `:auto` set: its gated value is self-declared with no filed catalog to
+;; check it against, and an unverifiable figure must not buy an
+;; auto-commit -- `equiprentalops.governor` independently reaches the same
+;; conclusion.
 (def phases
   "phase -> {:label .. :writes <ops allowed to write> :auto <ops
   allowed to auto-commit when governor-clean>}."
@@ -40,7 +45,7 @@
    2 {:label "assisted-coordination"  :writes #{:log-rental-record :schedule-maintenance-inspection
                                                 :coordinate-fleet-restock}                                        :auto #{}}
    3 {:label "supervised-auto"        :writes write-ops
-      :auto #{:log-rental-record :schedule-maintenance-inspection :coordinate-fleet-restock}}})
+      :auto #{:log-rental-record :schedule-maintenance-inspection}}})
 
 (def default-phase 3)
 

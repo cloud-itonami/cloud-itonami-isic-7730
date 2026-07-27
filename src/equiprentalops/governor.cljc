@@ -184,13 +184,33 @@
         :detail "点検なしでの再貸出安全クリアランスの確定/機材安全当局の判断の上書きは永久に禁止"}])))
 
 (defn- high-cost-fleet-restock?
-  "A `:coordinate-fleet-restock` proposal whose `:value
-  :estimated-cost` exceeds `high-cost-threshold` ALWAYS escalates,
-  regardless of confidence."
+  "A `:coordinate-fleet-restock` proposal escalates to a human unless its
+  `:estimated-cost` can be established to be BELOW `high-cost-threshold`.
+
+  Note the direction. This gate used to read `:estimated-cost` out of the
+  advisor's OWN proposal and escalate only when that number exceeded
+  the threshold, which made the gate's only input the very number it
+  existed to doubt:
+
+    - an advisor understating bought itself an auto-commit wherever
+      `:coordinate-fleet-restock` was `:auto`-eligible -- no human saw it;
+    - `(some-> amount (> threshold))` returned nil when the field was
+      ABSENT, so omitting `:estimated-cost` skipped the gate entirely.
+
+  There is no filed catalog in this actor's store to recompute the
+  figure from, so a self-declared value cannot be verified. An
+  unverifiable number is worthless as a DE-escalation signal: it may
+  raise the alarm, it must never silence it. The gate now escalates
+  whenever the value is absent, non-numeric, or above the threshold,
+  and stands down only for one that is present, numeric and below it.
+
+  `equiprentalops.phase` independently agrees -- `:coordinate-fleet-restock` is no
+  longer a member of any phase's `:auto` set."
   [proposal]
-  (and (= :coordinate-fleet-restock (:op proposal))
-       (some-> (get-in proposal [:value :estimated-cost])
-               (> high-cost-threshold))))
+  (when (= :coordinate-fleet-restock (:op proposal))
+    (let [v (get-in proposal [:value :estimated-cost])]
+      (or (not (number? v))
+          (> v high-cost-threshold)))))
 
 (defn check
   "Censors a EquipRentalOpsAdvisor proposal against the governor rules.
