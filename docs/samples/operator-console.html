@@ -2478,7 +2478,6 @@ img,svg { max-width: 100%; height: auto; }</style>
 <section class="card"><h2>Committed Coordination Records</h2><p class="note">Every row here passed the EquipRentalGovernor (all three HARD checks clean) and, where the op is not phase-auto-eligible or is an always-escalate op, a human fleet-manager approval.</p><table><thead><tr><th>Op</th><th>Asset</th><th>Value</th><th>Payload</th></tr></thead><tbody>
 <tr><td><code>log-rental-record</code></td><td><code>unit-1</code></td><td>{:asset-id &quot;unit-1&quot;, :renter &quot;Acme Contracting&quot;, :checkout &quot;2026-07-14&quot;, :days 3}</td><td>{:asset-id &quot;unit-1&quot;, :renter &quot;Acme Contracting&quot;, :checkout &quot;2026-07-14&quot;, :days 3}</td></tr>
 <tr><td><code>schedule-maintenance-inspection</code></td><td><code>unit-1</code></td><td>{:asset-id &quot;unit-1&quot;, :item &quot;hydraulic hose post-return inspection&quot;, :urgency &quot;routine&quot;}</td><td>{:asset-id &quot;unit-1&quot;, :item &quot;hydraulic hose post-return inspection&quot;, :urgency &quot;routine&quot;}</td></tr>
-<tr><td><code>coordinate-fleet-restock</code></td><td><code>unit-1</code></td><td>{:asset-id &quot;unit-1&quot;, :item &quot;replacement bucket teeth&quot;, :quantity 6, :estimated-cost 300}</td><td>{:asset-id &quot;unit-1&quot;, :item &quot;replacement bucket teeth&quot;, :quantity 6, :estimated-cost 300}</td></tr>
 <tr><td><code>coordinate-fleet-restock</code></td><td><code>unit-1</code></td><td>{:asset-id &quot;unit-1&quot;, :item &quot;replacement mini excavator unit&quot;, :quantity 1, :estimated-cost 15000}</td><td>{:asset-id &quot;unit-1&quot;, :item &quot;replacement mini excavator unit&quot;, :quantity 1, :estimated-cost 15000, :approved-by &quot;fleet-manager-1&quot;}</td></tr>
 <tr><td><code>flag-equipment-safety-concern</code></td><td><code>unit-1</code></td><td>{:asset-id &quot;unit-1&quot;, :concern &quot;hydraulic hose leak observed after last return&quot;, :confidence 0.92}</td><td>{:asset-id &quot;unit-1&quot;, :concern &quot;hydraulic hose leak observed after last return&quot;, :confidence 0.92, :approved-by &quot;fleet-manager-1&quot;}</td></tr>
 </tbody></table></section>
@@ -2486,12 +2485,11 @@ img,svg { max-width: 100%; height: auto; }</style>
 <tr><td>0</td><td>read-only</td><td></td><td></td></tr>
 <tr><td>1</td><td>assisted-logging</td><td>log-rental-record</td><td></td></tr>
 <tr><td>2</td><td>assisted-coordination</td><td>coordinate-fleet-restock, log-rental-record, schedule-maintenance-inspection</td><td></td></tr>
-<tr><td>3</td><td>supervised-auto</td><td>coordinate-fleet-restock, flag-equipment-safety-concern, log-rental-record, schedule-maintenance-inspection</td><td>coordinate-fleet-restock, log-rental-record, schedule-maintenance-inspection</td></tr>
+<tr><td>3</td><td>supervised-auto</td><td>coordinate-fleet-restock, flag-equipment-safety-concern, log-rental-record, schedule-maintenance-inspection</td><td>log-rental-record, schedule-maintenance-inspection</td></tr>
 </tbody></table></section>
 <section class="card"><h2>Audit Ledger (append-only, verbatim)</h2><table><thead><tr><th>Type</th><th>Op</th><th>Actor</th><th>Asset</th><th>Disposition</th><th>Basis</th><th>Confidence</th></tr></thead><tbody>
 <tr><td>committed</td><td><code>log-rental-record</code></td><td>mgr-1</td><td><code>unit-1</code></td><td class="ok">commit</td><td>unit-1</td><td></td></tr>
 <tr><td>committed</td><td><code>schedule-maintenance-inspection</code></td><td>mgr-1</td><td><code>unit-1</code></td><td class="ok">commit</td><td>unit-1</td><td></td></tr>
-<tr><td>committed</td><td><code>coordinate-fleet-restock</code></td><td>mgr-1</td><td><code>unit-1</code></td><td class="ok">commit</td><td>unit-1</td><td></td></tr>
 <tr><td>committed</td><td><code>coordinate-fleet-restock</code></td><td>mgr-1</td><td><code>unit-1</code></td><td class="ok">commit</td><td>unit-1</td><td></td></tr>
 <tr><td>committed</td><td><code>flag-equipment-safety-concern</code></td><td>mgr-1</td><td><code>unit-1</code></td><td class="ok">commit</td><td>unit-1</td><td></td></tr>
 <tr><td>governor-hold</td><td><code>log-rental-record</code></td><td>mgr-1</td><td><code>unit-99</code></td><td class="err">hold</td><td>asset-unverified</td><td>0.94</td></tr>
