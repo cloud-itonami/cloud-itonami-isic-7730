@@ -1,6 +1,6 @@
 (ns equiprentalops.advisor-test
   "Unit tests of `equiprentalops.advisor` proposal generation."
-  (:require [clojure.string :as str]
+  (:require [kotoba.lang.text :as str]
             [clojure.test :refer [deftest is testing]]
             [equiprentalops.advisor :as adv]
             [equiprentalops.governor :as gov]
@@ -85,7 +85,7 @@
                    {:concern "hydraulic hose leak observed after last return" :confidence 0.92}
                    {:concern "brake failure reported on return; unit taken out of rotation"}]]
       (let [p (adv/infer db {:op op :asset-id "unit-1" :patch patch})
-            blob (str/lower-case
+            blob (str/lower
                   (pr-str (select-keys p [:op :summary :rationale :cites :value])))]
         (is (not (some #(str/includes? blob %) gov/scope-excluded-terms))
             (str "default advisor proposal for op " op " with patch " (pr-str patch)
