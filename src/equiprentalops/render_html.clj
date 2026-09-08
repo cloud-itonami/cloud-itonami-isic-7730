@@ -5,7 +5,7 @@
   equiprentalops.governor -> equiprentalops.store).
   No invented numbers, no timestamps, byte-identical across reruns."
   (:require [jp-go-dds.skin]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             [equiprentalops.store :as store]
             [equiprentalops.operation :as op]
             [equiprentalops.advisor :as advisor]
