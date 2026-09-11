@@ -48,11 +48,11 @@ clojure -M:run
 
 ## Test suite
 
-- `test/equiprentalops/governor_test.clj` — unit tests of governor hard checks and scope exclusion (including a dedicated end-to-end regression guard that default advisor proposals never self-trip scope-exclusion)
-- `test/equiprentalops/advisor_test.clj` — advisor proposal shape and consistency (including a dedicated regression guard that every default mock-advisor proposal, across a variety of realistic patches, never self-trips the governor's scope-exclusion check)
-- `test/equiprentalops/phase_test.clj` — rollout phase logic
-- `test/equiprentalops/governor_contract_test.clj` — full graph integration, audit trail
-- `test/equiprentalops/store_contract_test.clj` — Store protocol and MemStore implementation
+- `test/equiprentalops/governor_test.cljk` — unit tests of governor hard checks and scope exclusion (including a dedicated end-to-end regression guard that default advisor proposals never self-trip scope-exclusion)
+- `test/equiprentalops/advisor_test.cljk` — advisor proposal shape and consistency (including a dedicated regression guard that every default mock-advisor proposal, across a variety of realistic patches, never self-trips the governor's scope-exclusion check)
+- `test/equiprentalops/phase_test.cljk` — rollout phase logic
+- `test/equiprentalops/governor_contract_test.cljk` — full graph integration, audit trail
+- `test/equiprentalops/store_contract_test.cljk` — Store protocol and MemStore implementation
 
 ## Modules
 
