@@ -1,6 +1,6 @@
 (ns equiprentalops.store-contract-test
   "Contract tests for `equiprentalops.store/Store` protocol."
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [equiprentalops.store :as store]))
 
 (deftest mem-store-asset-lookup

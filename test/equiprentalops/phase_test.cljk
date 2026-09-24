@@ -1,6 +1,6 @@
 (ns equiprentalops.phase-test
   "Unit tests of `equiprentalops.phase` rollout logic."
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [equiprentalops.phase :as phase]))
 
 (deftest phase-0-read-only
